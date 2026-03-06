@@ -1,11 +1,12 @@
 .data
-# criaÁ„o do menu e mensagens
-func_menu: .asciiz "======= Menu =======\n1  1.Soma\n2 2.Subtracao\n3 3.Multiplicacao\n4 4.Divisao\n5 5.Sair\n"
-escolha:   .asciiz "Escolha uma opÁ„o: "
-n1:        .asciiz "Digite o primeiro numero: "
-n2:        .asciiz "Digite o segundo numero: "
-resultado: .asciiz "O resultado È: "
+# cria√ß√£o do menu e mensagens
+func_menu: .asciiz "======= Menu =======\n  1.Soma\n 2.Subtracao\n 3.Multiplicacao\n 4.Divisao\n 5.Sair\n"
+escolha:   .asciiz "Escolha uma op√ß√£o: "
+n1:        .asciiz "Digite n1: "
+n2:        .asciiz "Digite n2: "
+resultado: .asciiz "O resultado √©: "
 resto_msg: .asciiz " Resto: "
+msg_div: .asciiz "Erro: Divisao por zero!\n"
 
 .text
 .globl main
@@ -25,15 +26,15 @@ main:
     syscall
     move $t0, $v0   # $t0 guarda o valor digitado pelo usuraio 
 
-    # condicoes para ver se È soma, sub, multi ou div
+    # condicoes para ver se √© soma, sub, multi ou div
     beq $t0, 1, func_soma
     beq $t0, 2, func_sub
     beq $t0, 3, func_multi
     beq $t0, 4, func_div
     beq $t0, 5, fim
-    j main          # se opÁ„o inv·lida, volta ao menu
+    j main          # se op√ß√£o inv√°lida, volta ao menu
 
-# funÁ„o soma
+# fun√ß√£o soma
 func_soma:
     # pede n1
     li $v0, 4
@@ -64,9 +65,14 @@ func_soma:
     move $a0, $t3
     syscall
 
+    # nova linha para n√£o ficar colado
+    li $v0, 4
+    la $a0, nova_linha
+    syscall
+
     j main # volta para o menu
     
-# funÁ„o subtracao
+# fun√ß√£o subtracao
 func_sub:
     # pede n1
     li $v0, 4
@@ -97,9 +103,14 @@ func_sub:
     move $a0, $t3
     syscall
 
+    # nova linha
+    li $v0, 4
+    la $a0, nova_linha
+    syscall
+
     j main #volta para o menu
     
-# funÁ„o multiplicao
+# fun√ß√£o multiplicao
 func_multi:
     # pede n1
     li $v0, 4
@@ -130,6 +141,11 @@ func_multi:
     move $a0, $t3
     syscall
 
+    # nova linha
+    li $v0, 4
+    la $a0, nova_linha
+    syscall
+
     j main #volta para o menu
 
 # funcao divisao
@@ -149,6 +165,9 @@ func_div:
     li $v0, 5
     syscall
     move $t2, $v0   # recebe o valor de n2
+
+    # divisao por zero
+    beq $t2, $zero, erro_div
 
     # faz a divisao
     div $t1, $t2
@@ -175,4 +194,20 @@ func_div:
     move $a0, $t4
     syscall
 
+    # nova linha
+    li $v0, 4
+    la $a0, nova_linha
+    syscall
+
     j main   # volta para o menu
+
+erro_div:
+    li $v0, 4
+    la $a0, msg_div
+    syscall
+    j main
+    
+fim:
+    li $v0, 10   # syscall 10 = exit
+    syscall
+
