@@ -6,7 +6,9 @@ n1:        .asciiz "Digite n1: "
 n2:        .asciiz "Digite n2: "
 resultado: .asciiz "O resultado é: "
 resto_msg: .asciiz " Resto: "
-msg_div: .asciiz "Erro: Divisao por zero!\n"
+quociente: .asciiz "quociente: "
+msg_div: .asciiz "Erro! \n"
+nova_linha: .asciiz "\n"
 
 .text
 .globl main
@@ -176,7 +178,7 @@ func_div:
 
     # print a frase
     li $v0, 4
-    la $a0, resultado
+    la $a0, quociente
     syscall
 
     # print quociente
@@ -210,4 +212,5 @@ erro_div:
 fim:
     li $v0, 10   # syscall 10 = exit
     syscall
+
 
